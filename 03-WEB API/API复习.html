@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <!--     
+        第一天
+             1. Web API : 应用程序编程接口，浏览器提供的一套用于操作浏览器(BOM)和页面元素(DOM)的方法
+             2. 页面元素 : 标签 节点 DOM对象 
+             3. DOM内容操作：
+                -innerText  纯文本操作  
+                -innerHTML  对某个标签进行文本和内容操作
+             4.DOM样式操作： box.style.width = '100px';必须单位
+             jquery中样式操作数值类型的单位可以不加，如果是设置多个属性以对象的形式传入
+              jquery样式操作：$('.box').css('width':100)
+                             $('.box').css({width:100,height:100,color:'red'})
+
+            5. 行内属性操作：
+                5.1 DOM 行内自带属性操作
+                    var box = document.getELementById('box');
+                    DOM中行内自带属性的操作使用 ：
+                    DOM对象.行内自带属性 类名操作为：DOM对象.className
+                    DOM中行内自定义属性：
+                    box.seAttribute('data-index',i);
+                    box.getAttribute('data-index');
+                    box.removeAttribute('data-index');
+                5.2 jquery中属性操作
+                    自带行内属性
+                    var $box = $('.box');
+                    $box.prop('id','newid') 设置
+                    $box.prop('id');获取
+                    行内自定义属性：
+                    $box.attr('data-index',100);设置
+                    $box.arrt('data-index');获取
+                    或者使用data()方法;
+                    $box.data('index'),这种访问的其实是'data-index'属性,data可以省略
+                    #box.data('index',200),这种设置方式不会在行内显示，但是可以获取到设置后的在正确的数值
+                 6. DOM和jquery中 offset 的区别
+
+                    6.1 DOM：
+                        offsetWidth 和 offsetHeight 分别用于获取当前元素的真是宽高(除margin),结果为数值类型，只读  
+                         offsetLeft 和 offsetTop 分别用于获取当前元素到定位父盒子之间的左侧和顶部的距离,子盒子的边框（不包括）到父盒子盒模型最外面的距离，只读
+                            影响因素：父盒子的padding和当前元素margin 还有定位后的left
+                         offsetParent ： 获取定位父盒子(定位形式无所谓)
+                        
+                    6.2 jquery:
+                        - $box.width() 和 $box.height() 获取当前元素的宽高
+                        - $box.innerWidth() $box.innerHeight()获取当前元素的宽高(width+padding)
+                        - $box.outerWidth() 和 $box.outerHeight()......(width+padding+border)
+                        - $box.outerWidth(true)和 $box.outerHeight(true)(盒模型总宽)
+
+                        - $box.offset()获取当前元素到页面(body)之间的距离，这个距离包括padding,border,margin
+                            获取结果为对象形式{top:100,left:100},  $box.offset().top 可以设置，是指时添加相对定位
+                        $box.position()获取到定位父元素之间的距离,盒模型的边界开始计算(margin到margin之间的距离)
+
+                        -$box.scrollTop()获取卷曲高度   $box.scrollLeft() 获取卷曲宽度
+
+                        7.节点的移动
+                        节点：元素节点 文本节点 属性节点
+                            nodeName：大写的标签名
+                            nodeType：1
+                            nodeValue：null
+                        DOM ：
+                            box.appendChild();
+                            参数：要移动的元素,将元素移动到box的最后部分
+                            box.insertBefor()
+                            参数1：要移动的元素
+                            参数2：参考元素，参数2必须传,不传会报错
+                            将有元素移动到参考元素的前面;
+                            特殊用法：参数2的位置可以为null和undefined,表示将当前元素移动到box的最后
+                            removeChild()
+                            参数：要移出的元素,必须是要要移除元素的子元素
+                        jquery:
+                            $box:要移动的元素 $target 目标元素
+                            append()
+                            prepend()
+                            after() 将某个元素添加到同级元素的后面
+                            before() 将某个元素添加到同级元素的后面
+
+                            appendTo()
+                            prependTo()
+                            insertAfter()
+                            insertBefore()
+
+                            .html('') 传入空字符串
+                            .empty()  只移除元素内部的元素‘
+                            .remove()：不仅可以移除元素内部的元素，还可以移除元素本身
+                            参数：选择器。
+                        8.克隆操作
+                         DOM box.cloneNode() 
+                         拷贝后需要使用appendChild()移动节点才会显示
+                        参数：true 表示深拷贝,拷贝标签和内部元素
+                              fasle 浅拷贝 
+                              事件不能拷贝，不能设置id 
+                        jquery ：
+                        $box.clone();也需要移动节点放入对应的元素中
+                        默认false 表示深拷贝，拷贝完整结构
+                        true表示深拷贝,可以拷贝事件
+                        9.DOM中的一些概念
+                         -事件对象：事件触发时,js的事件机制会将一些信息收集好以对象的方式传递给我们，这个对象在事件处理函数的形参位置接收
+                                    box.click = function(e){}
+                                    事件对象的三个属性：1. e.type ：用于获取当前事件的事件类型
+                                                     2. e.target:用于获取正在触发事件的元素(整个标签)
+                                                        再使用元素节点的nodeName属性检测
+                                                        e.target.nodeName = 'P';
+                                                    3.  e.clientX 获取鼠标到可视区域的x值;
+                                                         e.clientY 获取鼠标到可视区域的Y值;
+                        -事件委托：将某些元素的事件设置给祖先元素,通过事件冒泡传播
+                        -事件冒泡：由内到外传播
+                        -事件捕获：右外到内传播
+                        -事件冒泡的三个阶段：冒泡阶段。当前事件阶段，捕获阶段
+
+						10. 动态创建元素：
+							-DOM：
+							innerHTML :
+							document.createElement() 创建的元素需要移动到指定的元素内部
+							-jQuery：
+							html()方法拼接字符串直接放入
+							$('') 拼接字符串，创建的并不会再页面显示，需要移动到相应的位置
+							
+						11.文本操作
+							-DOM  
+								-innerText  纯文本操作
+								-innerHTML  内部传入标签可以生成标签(文本和结构的操作) ，问题是会有生成文本节点。同时还会覆盖原有的文本内容。所以要使用转义符
+								-document.createElement('li')  参数：标签名。字符串类型的标签。
+							-jquery 
+								-text() 纯文本操作
+								-html() 可以生成标签(文本和结构的操作),会覆盖原有的文本内容
+
+						 return fasle 可以结束$.each()的循环;
+
+						 12.样式操作：
+						 	-DOM 
+						 		DOM 中操作的都是行内样式,DOM元素先访问style再访问具体的属性名，属性值都是字符串形式的，有单位必须加;
+						 		box.style.width = '100px';
+						 		box.style.display = 'none';
+						 	-jquery
+						 		jquery中访问设置属性
+						 		带单位的px ,默认为px,可加可不加,如果设置多个属性以对象的形式传入;
+						 		$box.css('width',100);
+						 		$box.css('color','red');
+						 		$box.css({width:100,height:100,backgroundColor:'red'})
+						 		也可以使用获取操作：获取的是计算后的样式(推荐单个获取)
+						 		console.log($box.css('width'));
+
+						 13.类名操作
+						 	-DOM：
+						 		设置操作时新设置的类名会覆盖已有的类名
+						 		box.className = 'fl clearfix'  设置操作
+						 		console.log(box.className)     获取操作
+							-jQuery
+								类名操作使用
+								addClass()-添加类名
+								removeClass()-移除类名,
+								toggleClass()-切换类名(如果有就删除，如果没有就添加),不传参数默认清除所有
+								hasClass()-获取类名，推荐单个类名获取操作。返回值为布尔类型。
+					
+						14. 事件管理：
+						    -DOM
+						    	事件绑定（添加事件监听者）
+						    	addEvenetListener('click',function(){}) ; 
+						    	参数1：事件类型名(字符串类型,没有on)
+						    	参数2：事件处理程序
+						    	参数3：true表示事件捕获，false代表事件冒泡
+
+								移除事件：
+								removeEventListener()
+								参数1：事件类型名(字符串类型,没有on)
+						    	参数2：事件处理程序(和设置的时候必须是同一个函数，所以要写成命名函数的形式)
+						    	参数3：true表示事件捕获，false代表事件冒泡
+
+						    	IE中事件设置：
+						    	attachEvent() 添加事件
+						    	datachEvent() 移除事件
+
+						    jquery
+						    	有三种：
+						    	$box.click(function(){}),
+						    	$box.bind({'click:function()','mouseover:function(){}'})
+						    	前俩种均无法对动态创建的元素生效
+						    	$box.delegate()事件冒泡  参数1：选择器  参数2 ：事件处理程序
+
+						    	使用on同一管理事件程序
+						    	1.普通事件设置 $box.on('click',function(){});
+						    	2.多个事件设置 $box.on({click:function(){},mouseover:function(){}});
+						    	3.设置事件委托 $box.on('click','p',function(){})  
+						    	参数1：事件类型  参数2：选择器(表示内部要触发事件的元素)
+						    	参数3：事件处理程序;
+
+						    15. return false
+						    DOM 
+						    	return false 可以阻止默认事件
+								e.stopPropagation  阻止事件冒泡
+						    jquery：
+						    return false :1.可以阻止默认事件 2.可以阻止事件冒泡 3.可以结束$.each()的循环
+						    			e.preventDefault()   取消默认事件
+						    			e.stopPropagation()  阻止事件冒泡
+
+
+     -->
+</body>
+</html>
