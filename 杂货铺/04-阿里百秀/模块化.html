@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <p>
+        requireJS的核心原理是什么？如何动态加载的？如何避免多次加载的？如何缓存的？
+
+        1.模块化的概念
+        模块就是实现特定功能的一组方法。(可以看做接口api,提供了一种能力);例如jQuery提供$,fullpage提供$.fn.fullpage等等;
+    
+        2.模块规范(也就是模块化的标准)
+        CommonJS  AMD(asynchronous module definition)  CMD(Common module definition)
+    
+        3.CommonJS   node.js的模块即是参照CommonJS实现;         服务器端
+        var http=require('http');
+        var fs=require('fs');
+    
+        假如有一个名为math的模块.
+        var math=require('math');
+        math.add().....;
+        .....;
+    
+        4.AMD--requireJs(一个库)                               浏览器端
+        require(['math'],function(math){
+            math.add()....;
+        })
+        .....;
+
+        5.如何使用requireJS以及使用的原因?
+            ①为了防止过多的script引入,消耗网页性能,导致页面失去响应
+            ②为了不再人为的寻找文件引入的依赖关系,尤其是项目中更加的不方便
+        5-1.下载引入<script src="js/require.js"></script>
+
+        5-2.为了防止该引入导致网页失去响应,两种解决办法:
+            ①将该引入写在网页底部
+            ②添加'defer'及async='true' <script src="js/require.js" defer async="true" ></script>
+
+        --index.html 
+        --[js]--require.js
+            |---main.js
+            |--[lib]
+                |--jQuery
+                |--underscore
+                |--backbone 
+           
+        5-3.入口模块
+        使用data-main指定入口模块,假设js目录下有一个require.js
+
+        index.html中:
+        <script src="js/require.js" data-main="js/main"></script>
+
+        main.js中:
+        require(['lib/jquery', 'underscore', 'backbone'], function ($, _, 'backbone'){
+            ............
+        });
+
+        参数一:数组形式,表示主模块依赖的其他模块
+        参数二:回调函数,模块加载成功后,将其返回的功能作为参数
+
+        5-4.路径问题
+        require.config({
+    　　　　paths: {
+    　　　　　　"jquery": "lib/jquery.min",
+    　　　　　　"underscore": "lib/underscore.min",
+    　　　　　　"backbone": "lib/backbone.min"
+    　　　　}
+    　　});
+        如果基目录相同:
+        require.config({
+    　　　　baseUrl: "lib",
+    　　　　paths: {
+    　　　　　　"jquery": "jquery.min",
+    　　　　　　"underscore": "underscore.min",
+    　　　　　　"backbone": "backbone.min"
+    　　　　}
+    　　});
+
+        5-5.如何使用requireJS加载没有遵循AMD规范的JS文件??(例如js插件);
+        require.config({
+        shim: { 
+　　    　'jquery.scroll': {
+　　    　　　　   deps: ['jquery'],
+　　    　　　     exports: 'jQuery.fn.scroll'
+　　    　　  }
+　　          }
+           })
+
+        6.分模块
+            ①分模块不依赖其他模块
+            math.js
+            define(function (){
+        　　　　var fn = function (x,y){　return x+y };
+        　　　　return {
+        　　　　　　add: fn
+        　　　　};
+            });
+
+            ②分模块依赖其他模块
+            define(['myLib'], function(myLib){
+         　　　　var fun = function(){  myLib.doSomething() };
+         　　　　return {
+         　　　　　　add : fun
+         　　　　};
+         　　});
+        
+        
+        7.CMD---seaJS
+        入口模块:
+        seaJS.use(['jquery', 'underscore', 'backbone'], function ($, _, 'backbone'){
+            ............
+        })
+
+        分模块:
+        define('id'?,[deps]?,factory){
+            var math=require('math');
+            math.add()....
+        }
+
+        参数含义:(id与deps省略是CMD规范用法);
+        id指的是当前模块名;问号代表可省略,省略的话默认模块名字就是当前文件的名字;
+        deps指的是当前模块的依赖模块,可省略;
+
+        factory可以是字符串.对象或者是函数;
+        如果是函数:function(require,exports,module){}
+
+        --------(注意这里与AMD规范的明显差别)
+        define(function(require,exports,module){
+            var math=require('math');
+            math.add()...;
+            var english=require('english');
+            english.speak()...;
+        })
+
+        这里的require是语法关键字;
+        CMD中最常用的五个API:define, require, require.async, exports, module.exports
+       
+    </p>    
+</body>
+</html> 
+    
+
+
+
+
+
+    
+    
