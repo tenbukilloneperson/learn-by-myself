@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link rel="stylesheet" href="ueditor/themes/default/css/umeditor.css">
+	<script src="jquery.js"></script>
+	<script src="ueditor/umeditor.config.js"></script>
+	<script src="ueditor/umeditor.js"></script>
+</head>
+<body>
+	<textarea name="content" id="content" cols="30" rows="10"></textarea>
+	<script>
+		let um = UM.getEditor('content',{
+			initialFrameWidth :  800,
+			initialFrameHeigt :  300
+		});
+		um.setContent('');
+	</script>
+</body>
+</html>
